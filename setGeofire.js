@@ -1,4 +1,4 @@
-var token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2IjowLCJkIjp7InVpZCI6IjEiLCJhZG1pbiI6dHJ1ZX0sImlhdCI6MTQyMzM0ODU1OH0.nZEh6_1Fg5Ar7knWf3OsmzjBD9fhcUbrmr06SWXewbQ';
+var token = process.env.FIREBASE_AUTH_TOKEN;
 
 var Firebase = require('firebase');
 var GeoFire = require('geofire');
