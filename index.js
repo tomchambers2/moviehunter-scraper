@@ -5,9 +5,9 @@ var cheerio  = require('cheerio');
 var fs = require('fs');
 var Firebase = require('firebase');
 var moment = require('moment');
+var ref = new Firebase("https://movielistings.firebaseio.com/");
 
 var runTask = function() {
-	var ref = new Firebase("https://movielistings.firebaseio.com/");
 	ref.authWithCustomToken(token, function(error, authData) {
 		if (error) {
 	    	console.log("Login Failed!", error);
