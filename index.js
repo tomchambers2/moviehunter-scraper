@@ -6,15 +6,17 @@ var fs = require('fs');
 var Firebase = require('firebase');
 var moment = require('moment');
 
-var ref = new Firebase("https://movielistings.firebaseio.com/");
-ref.authWithCustomToken(token, function(error, authData) {
-	if (error) {
-    	console.log("Login Failed!", error);
-  	} else {
-    	console.log("Authenticated successfully with payload:", authData);
-    	getMovies();
-  	}
-})
+var runTask = function() {
+	var ref = new Firebase("https://movielistings.firebaseio.com/");
+	ref.authWithCustomToken(token, function(error, authData) {
+		if (error) {
+	    	console.log("Login Failed!", error);
+	  	} else {
+	    	console.log("Authenticated successfully with payload:", authData);
+	    	getMovies();
+	  	}
+	});
+}
 
 function getMovies() {
 	var moviesRef = ref.child('movies');
@@ -146,3 +148,9 @@ function getMovies() {
 		getTimes(cinema.tid);
 	});
 };
+
+if (require.main === module) {
+	runTask();
+}
+
+module.exports = runTask;
