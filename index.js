@@ -6,6 +6,7 @@ var fs = require('fs');
 var Firebase = require('firebase');
 var moment = require('moment');
 var ref = new Firebase("https://movielistings.firebaseio.com/");
+var RSVP = require('rsvp');
 
 var runTask = function() {
 	ref.authWithCustomToken(token, function(error, authData) {
@@ -63,7 +64,7 @@ function getMovies() {
 			var movie = result.val();
 			var date = moment().startOf('day').valueOf();
 			moviesRef.child(result.key()).child(tid).child(date).set({ times: times });
-			console.log('added',tid,'to',title,result.key(),'at',date);
+			//console.log('added',tid,'to',title,result.key(),'at',date);
 			addTimesToCinema(tid, title, times);
 		});
 	}
@@ -110,43 +111,102 @@ function getMovies() {
 	};
 
 	function getTimes(tid) {
-		var query = {
-		    url: 'http://www.google.co.uk/movies?hl=en&near=Loughborough,+UK&tid='+tid,
-		    type: 'html',
-		    selector: 'div.movie',
-		    extract: 'html'
-		  },
-		  uriQuery = encodeURIComponent(JSON.stringify(query)),
-		  requestUrl  = 'https://noodlescraper.herokuapp.com/?q=' +
-		             uriQuery;
+		var promise = new RSVP.Promise(function(resolve, reject) {
+			var query = {
+			    url: 'http://cloak.herokuapp.com/?http://www.google.co.uk/movies?hl=en&near=Loughborough,+UK&tid='+tid,
+			    type: 'html',
+			    selector: 'div.movie',
+			    extract: 'html'
+			  },
+			  uriQuery = encodeURIComponent(JSON.stringify(query)),
+			  requestUrl  = 'https://noodlescraper.herokuapp.com/?q=' +
+			             uriQuery;
 
-		request(requestUrl, function (error, response, data) {
-		  if (!error && response.statusCode == 200) {
-		  	var json = JSON.parse(data);
+			var requestCount = 0;
 
-		    for (var i = 0; i < json[0].results.length; i++) {
-		    	var data = json[0].results[i];
-		    	$ = cheerio.load(data);
-			    var title = $('div.name').text();
-			    var info = $('span.info').text().split(' - ');
-			    var times = $('div.times').text().split(' ');
+			function makeRequest() {
+				requestCount++;
 
-			    for (var j = 0; j < times.length; j++) {
-			    	times[j] = times[j].trim();
-			    };
+				if (requestCount > 10) {
+					reject();
+					throw new Error('Tried 10 times, giving up');
+				}
 
-				addData(tid, title, times, info);
-		    }
-		  } else {
-		  	console.log("ERROR",error,response.statusCode);
-		  }
+				request(requestUrl, function (error, response, data) {
+					//if error, call refresh, wait 15 
+					if (error) {
+						console.log('error with scraping servers (noodle > cloak > google)',error);
+						request('http://cloak.herokuapp.com/refresh', function(error, response, data) {
+							if (!error && response.statusCode == 200) {
+								setTimeout(function() {
+									makeRequest();
+								}, requestCount * 15000);
+							} else {
+								reject();
+								throw new Error('Refresh of cloak server failed');
+							}
+						});
+					}
+
+					if (!error && response.statusCode == 200) {
+						var json = JSON.parse(data);
+
+						for (var i = 0; i < json[0].results.length; i++) {
+							var data = json[0].results[i];
+							$ = cheerio.load(data);
+						    var title = $('div.name').text();
+						    var info = $('span.info').text().split(' - ');
+						    var times = $('div.times').text().split(' ');
+
+						    for (var j = 0; j < times.length; j++) {
+						    	times[j] = times[j].trim();
+						    };
+
+							addData(tid, title, times, info);
+						}
+						resolve();
+					} else {
+						console.log("ERROR",error,response.statusCode);
+					}
+				});
+			}
+
+			makeRequest();
 		});
+		
+		return promise;
 	}
+
+	var incompleteTasks = [];
+	var processingTasks = [];
 
 	cinemas.on('child_added', function(result) {
 		var cinema = result.val();
-		getTimes(cinema.tid);
+		//console.log(cinema);
+		if (!cinema.tid) return;
+		executeNextTask(cinema.tid);
 	});
+
+	function executeNextTask(tid) {
+		if (tid) {
+			incompleteTasks.push(tid);
+			console.log('added',tid,'to list of incomplete tasks');
+		};
+
+		if (processingTasks.length>0) return;
+
+		var tid = incompleteTasks.shift();
+		processingTasks.push(tid);
+		console.log('added',tid,'to list of processing tasks');
+
+		getTimes(tid).then(function() {
+			//task is done, call self. remove from processing
+			processingTasks.shift();
+			executeNextTask();
+		}, function() {
+			throw new Error('Failed to contact cloak server, giving up');
+		})
+	}
 };
 
 if (require.main === module) {

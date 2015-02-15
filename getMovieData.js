@@ -106,7 +106,7 @@ var getImdbDetails = function(movieTitle) {
 };
 
 var getData = function(title) {
-	console.log('getting data for',title);
+	//console.log('getting data for',title);
 	var promise = new RSVP.Promise(function(resolve, reject) {
 		var promises = [getImdbDetails(title),getRtDetails(title),getYoutubeData(title)];
 
