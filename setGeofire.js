@@ -9,6 +9,7 @@ var cinemas = ref.child('cinemas');
 var cinemasGeofire = ref.child('cinemasGeofire');
 
 var ref = new Firebase("https://movielistings.firebaseio.com/");
+console.log("TOKEN",token);
 ref.authWithCustomToken(token, function(error, authData) {
   if (error) {
       console.log("Login Failed!", error);

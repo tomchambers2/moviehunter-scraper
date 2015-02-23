@@ -1,94 +1,20 @@
 0 info it worked if it ends with ok
-1 verbose cli [ 'node',
-1 verbose cli   '/usr/local/bin/npm',
-1 verbose cli   'install',
-1 verbose cli   'firebase-token-generator-node',
-1 verbose cli   '--save-dev' ]
+1 verbose cli [ 'node', '/usr/local/bin/npm', 'install', 'async' ]
 2 info using npm@1.4.28
 3 info using node@v0.10.35
-4 warn package.json moviescraper@1.0.0 No description
-5 warn package.json moviescraper@1.0.0 No repository field.
-6 warn package.json moviescraper@1.0.0 No README data
-7 verbose readDependencies using package.json deps
-8 verbose cache add [ 'firebase-token-generator-node', null ]
-9 verbose cache add name=undefined spec="firebase-token-generator-node" args=["firebase-token-generator-node",null]
-10 verbose parsed url { protocol: null,
-10 verbose parsed url   slashes: null,
-10 verbose parsed url   auth: null,
-10 verbose parsed url   host: null,
-10 verbose parsed url   port: null,
-10 verbose parsed url   hostname: null,
-10 verbose parsed url   hash: null,
-10 verbose parsed url   search: null,
-10 verbose parsed url   query: null,
-10 verbose parsed url   pathname: 'firebase-token-generator-node',
-10 verbose parsed url   path: 'firebase-token-generator-node',
-10 verbose parsed url   href: 'firebase-token-generator-node' }
-11 silly lockFile 2ca1cce1-firebase-token-generator-node firebase-token-generator-node
-12 verbose lock firebase-token-generator-node /Users/tomchambers/.npm/2ca1cce1-firebase-token-generator-node.lock
-13 silly lockFile 2ca1cce1-firebase-token-generator-node firebase-token-generator-node
-14 silly lockFile 2ca1cce1-firebase-token-generator-node firebase-token-generator-node
-15 verbose addNamed [ 'firebase-token-generator-node', '' ]
-16 verbose addNamed [ null, '*' ]
-17 silly lockFile 9e0c6586-firebase-token-generator-node firebase-token-generator-node@
-18 verbose lock firebase-token-generator-node@ /Users/tomchambers/.npm/9e0c6586-firebase-token-generator-node.lock
-19 silly addNameRange { name: 'firebase-token-generator-node',
-19 silly addNameRange   range: '*',
-19 silly addNameRange   hasData: false }
-20 verbose request where is /firebase-token-generator-node
-21 verbose request registry https://registry.npmjs.org/
-22 verbose request id 56ceeefb6e7e96f2
-23 verbose url raw /firebase-token-generator-node
-24 verbose url resolving [ 'https://registry.npmjs.org/',
-24 verbose url resolving   './firebase-token-generator-node' ]
-25 verbose url resolved https://registry.npmjs.org/firebase-token-generator-node
-26 verbose request where is https://registry.npmjs.org/firebase-token-generator-node
-27 info trying registry request attempt 1 at 22:35:08
-28 http GET https://registry.npmjs.org/firebase-token-generator-node
-29 http 404 https://registry.npmjs.org/firebase-token-generator-node
-30 verbose headers { date: 'Sat, 07 Feb 2015 22:35:09 GMT',
-30 verbose headers   server: 'CouchDB/1.5.0 (Erlang OTP/R16B03)',
-30 verbose headers   'content-type': 'application/json',
-30 verbose headers   'cache-control': 'max-age=0',
-30 verbose headers   'content-length': '52',
-30 verbose headers   'accept-ranges': 'bytes',
-30 verbose headers   via: '1.1 varnish',
-30 verbose headers   age: '0',
-30 verbose headers   'x-served-by': 'cache-lhr6325-LHR',
-30 verbose headers   'x-cache': 'MISS',
-30 verbose headers   'x-cache-hits': '0',
-30 verbose headers   'x-timer': 'S1423348508.652342,VS0,VE380',
-30 verbose headers   'keep-alive': 'timeout=10, max=50',
-30 verbose headers   connection: 'Keep-Alive' }
-31 silly registry.get cb [ 404,
-31 silly registry.get   { date: 'Sat, 07 Feb 2015 22:35:09 GMT',
-31 silly registry.get     server: 'CouchDB/1.5.0 (Erlang OTP/R16B03)',
-31 silly registry.get     'content-type': 'application/json',
-31 silly registry.get     'cache-control': 'max-age=0',
-31 silly registry.get     'content-length': '52',
-31 silly registry.get     'accept-ranges': 'bytes',
-31 silly registry.get     via: '1.1 varnish',
-31 silly registry.get     age: '0',
-31 silly registry.get     'x-served-by': 'cache-lhr6325-LHR',
-31 silly registry.get     'x-cache': 'MISS',
-31 silly registry.get     'x-cache-hits': '0',
-31 silly registry.get     'x-timer': 'S1423348508.652342,VS0,VE380',
-31 silly registry.get     'keep-alive': 'timeout=10, max=50',
-31 silly registry.get     connection: 'Keep-Alive' } ]
-32 silly lockFile 9e0c6586-firebase-token-generator-node firebase-token-generator-node@
-33 silly lockFile 9e0c6586-firebase-token-generator-node firebase-token-generator-node@
-34 error 404 404 Not Found: firebase-token-generator-node
-34 error 404
-34 error 404 'firebase-token-generator-node' is not in the npm registry.
-34 error 404 You should bug the author to publish it
-34 error 404 It was specified as a dependency of 'moviescraper'
-34 error 404
-34 error 404 Note that you can also install from a
-34 error 404 tarball, folder, or http url, or git url.
-35 error System Darwin 14.1.0
-36 error command "node" "/usr/local/bin/npm" "install" "firebase-token-generator-node" "--save-dev"
-37 error cwd /Users/tomchambers/projects/moviescraper
-38 error node -v v0.10.35
-39 error npm -v 1.4.28
-40 error code E404
-41 verbose exit [ 1, true ]
+4 error Failed to parse json
+4 error Unexpected token }
+5 error File: /Users/tomchambers/projects/moviehunter-scraper/package.json
+6 error Failed to parse package.json data.
+6 error package.json must be actual JSON, not just JavaScript.
+6 error
+6 error This is not a bug in npm.
+6 error Tell the package author to fix their package.json file. JSON.parse
+7 error System Darwin 14.1.0
+8 error command "node" "/usr/local/bin/npm" "install" "async"
+9 error cwd /Users/tomchambers/projects/moviehunter-scraper
+10 error node -v v0.10.35
+11 error npm -v 1.4.28
+12 error file /Users/tomchambers/projects/moviehunter-scraper/package.json
+13 error code EJSONPARSE
+14 verbose exit [ 1, true ]

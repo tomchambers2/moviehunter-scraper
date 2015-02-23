@@ -37,14 +37,13 @@ function getMovies() {
 		return completedMovies.indexOf(title) > -1;
 	}
 
-	function createMovie(tid, title, times, info) {
+	function createMovie(tid, title, date, times, info) {
 		movieComplete(title);
 		var movie = {
 			google: info,
 			title: title,
 			url: title.replace(/\s+/g, '-').toLowerCase()
 		}
-		var date = moment().startOf('day').valueOf();
 		movie[tid] = {};
 		movie[tid][date] = {};
 		movie[tid][date].times = times;
@@ -59,10 +58,9 @@ function getMovies() {
 	    addTimesToCinema(tid, title, times);
 	}
 
-	function updateMovie(tid, title, times) {
+	function updateMovie(tid, title, date, times) {
 		moviesRef.orderByChild('title').startAt(title).endAt(title).once('child_added', function(result) {
 			var movie = result.val();
-			var date = moment().startOf('day').valueOf();
 			moviesRef.child(result.key()).child(tid).child(date).set({ times: times });
 			//console.log('added',tid,'to',title,result.key(),'at',date);
 			addTimesToCinema(tid, title, times);
@@ -99,32 +97,44 @@ function getMovies() {
 		});
 	}
 
-	function addData(tid, title, times, info) {
+	function addData(tid, title, date, times, info) {
+		console.log('adding data',tid,title);
 		moviesRef.orderByChild('title').startAt(title).endAt(title).once('value', function(snapshot) {
 			var exists = snapshot.val() !== null;
 			if (exists || checkMovieComplete(title)) {
-				updateMovie(tid, title, times);
+				console.log(title,'exists, updating');
+				updateMovie(tid, title, date, times);
 			} else {
-				createMovie(tid, title, times, info);
+				console.log(title,'does not exist, creating');
+				createMovie(tid, title, date, times, info);
 			}
 		});
 	};
 
-	function getTimes(tid) {
+	function getTimes(task) {
+		var tid = task.tid;
+		var date = task.date;
+
+		console.log('Doing task',tid);
+
 		var promise = new RSVP.Promise(function(resolve, reject) {
 			var query = {
-			    url: 'http://cloak.herokuapp.com/?http://www.google.co.uk/movies?hl=en&near=Loughborough,+UK&tid='+tid,
+			    url: 'http://cloak.herokuapp.com/?http://www.google.co.uk/movies?hl=en&near=Loughborough,+UK&tid='+tid+'&date='+date,
 			    type: 'html',
 			    selector: 'div.movie',
 			    extract: 'html'
 			  },
+
 			  uriQuery = encodeURIComponent(JSON.stringify(query)),
 			  requestUrl  = 'https://noodlescraper.herokuapp.com/?q=' +
 			             uriQuery;
 
+			console.log('will call',query.url);
+
 			var requestCount = 0;
 
 			function makeRequest() {
+				console.log('Made request for',tid);
 				requestCount++;
 
 				if (requestCount > 10) {
@@ -151,6 +161,8 @@ function getMovies() {
 					if (!error && response.statusCode == 200) {
 						var json = JSON.parse(data);
 
+						console.log(tid,'tid json',json[0].results.length);
+
 						for (var i = 0; i < json[0].results.length; i++) {
 							var data = json[0].results[i];
 							$ = cheerio.load(data);
@@ -162,8 +174,11 @@ function getMovies() {
 						    	times[j] = times[j].trim();
 						    };
 
-							addData(tid, title, times, info);
+						    var millisecondDate = moment().startOf('day').add(date, 'days').valueOf();
+							addData(tid, title, millisecondDate, times, info);
 						}
+
+						console.log('Finished request for',tid);
 						resolve();
 					} else {
 						console.log("ERROR",error,response.statusCode);
@@ -182,24 +197,25 @@ function getMovies() {
 
 	cinemas.on('child_added', function(result) {
 		var cinema = result.val();
-		//console.log(cinema);
 		if (!cinema.tid) return;
-		executeNextTask(cinema.tid);
+		for (var i = 0; i <= 4; i++) {
+			executeNextTask({ tid: cinema.tid, date: i });
+		};
 	});
 
-	function executeNextTask(tid) {
-		if (tid) {
-			incompleteTasks.push(tid);
-			console.log('added',tid,'to list of incomplete tasks');
+	function executeNextTask(task) {
+		if (task) {
+			incompleteTasks.push(task);
+			console.log('added',task,'to list of incomplete tasks');
 		};
 
 		if (processingTasks.length>0) return;
 
-		var tid = incompleteTasks.shift();
-		processingTasks.push(tid);
-		console.log('added',tid,'to list of processing tasks');
+		var task = incompleteTasks.shift();
+		processingTasks.push(task);
+		console.log('added',task,'to list of processing tasks');
 
-		getTimes(tid).then(function() {
+		getTimes(task).then(function() {
 			//task is done, call self. remove from processing
 			processingTasks.shift();
 			executeNextTask();
