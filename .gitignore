@@ -1,2 +1,4 @@
+.gitignore
+.DS_Store
 token
-node_modules/*
+node_modules
