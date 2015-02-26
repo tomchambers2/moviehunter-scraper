@@ -66,7 +66,10 @@ var getRtDetails = function(title) {
 		      console.log(result.movies[0].release_dates);
 		      
 		      var posterLink = result.movies[0].posters.thumbnail;
-		      rt.poster = posterLink.replace(/_tmb/i, '_pro');
+		      //rt.poster = posterLink.replace(/_tmb/i, '_pro');
+
+		      var root = 'http://content6.flixster.com';
+		      rt.poster = root + posterLink.match(/(\/movie\/.+)/)[1];
 
 		    	resolve(rt); 
 		    }
