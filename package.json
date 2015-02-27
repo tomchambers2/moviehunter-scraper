@@ -1,7 +1,9 @@
 {
   "name": "moviescraper",
   "version": "1.0.0",
-  "engines": "0.10.x",
+  "engines": {
+    "node": "0.10.x"
+  },
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -17,6 +19,7 @@
     "limiter": "^1.0.5",
     "lodash": "^3.2.0",
     "moment": "^2.9.0",
+    "request": "^2.53.0",
     "rsvp": "^3.0.16"
   },
   "devDependencies": {
