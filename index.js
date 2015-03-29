@@ -8,6 +8,10 @@ var moment = require('moment');
 var ref = new Firebase("https://movielistings.firebaseio.com/");
 var RSVP = require('rsvp');
 
+setTimeout(function() {
+	process.exit();
+}, 1000*60*60*3);
+
 var runTask = function() {
 	ref.authWithCustomToken(token, function(error, authData) {
 		if (error) {
