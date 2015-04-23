@@ -6,7 +6,7 @@ var GeoFire = require('geofire');
 var ref = new Firebase("https://movielistings.firebaseio.com/");
 var cinemasRef = ref.child('cinemas');
 var moviesRef = ref.child('movies');
-var moment = require('moment');
+var moment = require('moment-timezone');
 
 console.log('auth',token);
 
@@ -72,7 +72,8 @@ var runTask = function() {
 					}
 				}
 				if (notShowing) {
-					console.log(cinema.title,"not showing, film DELETED");
+
+					console.log(movieId,"not showing, film DELETED");
 					removeMovieFromCinema(tid, movieId);
 				}
 				console.log(tid,"is showing film",movieId);

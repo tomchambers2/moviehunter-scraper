@@ -1,10 +1,12 @@
 var token = process.env.FIREBASE_AUTH_TOKEN;
 
+console.log(token);
+
 var request = require('request');
 var cheerio  = require('cheerio');
 var fs = require('fs');
 var Firebase = require('firebase');
-var moment = require('moment');
+var moment = require('moment-timezone');
 var ref = new Firebase("https://movielistings.firebaseio.com/");
 var RSVP = require('rsvp');
 
@@ -178,7 +180,7 @@ function getMovies() {
 						    	times[j] = times[j].trim();
 						    };
 
-						    var millisecondDate = moment().startOf('day').add(date, 'days').valueOf();
+						    var millisecondDate = moment.tz('Europe/London').startOf('day').add(date, 'days').valueOf();
 							addData(tid, title, millisecondDate, times, info);
 						}
 
